@@ -1,0 +1,103 @@
+---
+title: "The selector: Identifying the Most Appropriate Test Statistic For Assessing Model Fit"
+author: "Njål Foldnes"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+citation_package: natbib
+bibliography: bibsel.bib
+biblio-style: apalike
+---
+
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+The selector package uses bootstrapping to help select the best possible test statistic to 
+evaluate a latent variable model. The procedure was proposed by @gronneberg2019testing, and a tutorial is given in @fold2. Basically, the sample is transformed so that it fits the model exactly, and bootstrap samples are drawn from the transformed sample. In each bootstrap sample the p-value of various test statistics are calculated. Finally, the test statistic whose empirical p-value distribution is closest to the uniform distribution is selected. The metric used to select the best statistic is chosen by the user, and have the following options :
+
+* AD: Anderson-Darling distance to uniform. (Default)
+* CVM: Cramer-Von Mises Test
+* KS: Kolmogorov-Smirnov distance to uniform
+* EC5: Type I error control closest to 5\%
+
+The test statistics available as candidates are:
+
+* ml: normal-theory maximum likelihood ratio test
+* sb: satorra-bentler mean scaled test
+* eba2: eba test with 2 blocks (see @fold1 for eigenvalue block-averaging tests)
+* eba4: eba test with 4 blocks 
+* ebaf: eba test with block size 1
+* wl: the scaled F test of @wu2017approximations
+* ss: scaled-and-shifted test of @asparouhov2010simple
+
+
+
+
+## An example
+
+The user first uses lavaan to fit the model to the sample, obtaining a fit object $f$.
+The object may be used to calculate p-values for a variety of so-called robust test statistics.
+```{r, message=F, warning=F}
+library(psych)
+library(dplyr)
+library(lavaan)
+library(selector)
+                
+#random subsample of big-five dataset
+data(bfi)# from psych package
+set.seed(1234)
+my.sample <- sample_n(bfi, size=200)
+
+#model with two factors
+my.model <- "A =~ A1+A2+A3+A4+A5; O =~ O1+O2+O3+O4+O5"
+
+#fit model
+f <- sem(my.model, data=my.sample)
+
+#let us calculate the p-values of the candidate test statistics
+round(test_pvalues(f),3)
+```
+
+The *test_pvalues()* function calculates the p-value for the test of correct model specification for the above-mentioned statistics.
+The ml test strongly suggests that the model is misspecified.
+The sb test also suggests that the model is misspecified, but less so than the ml test.
+The remaining tests suggest that we do not have strong evidence for model misspecification.
+
+
+So which test is most trustworthy? The main function *selector(f)* runs the bootstrap (so it has considerable running time) and extracts the p-values for each of the statistics.
+
+```{r, message=F, warning=F}
+selector.result <- selector(f)
+```
+
+In this case, the eba2 p-values are closest to uniform in the Anderson-Darling metric.
+Therefor, the researcher should place the most confidence in this statistic. The p-value histogram shows that eba2 has a rather uniform distribution of bootstrapped p-values. 
+
+
+The selector returns an object containing the distance-to-uniform metrics for each of the metrics mentioned above
+
+```{r}
+selector.result$metrics
+```
+In terms of the first 3 metrics, the eba2 is the best performer. Howere, using metric EC5, 
+it is outperformed by ebafull and wl. 
+
+In addition, the p-value associated with the classical Bollen-Stine bootstrap approach, applied to each of the test statistics, is available:
+```{r}
+selector.result$bootstrap.pvals
+```
+
+
+
+## References
+
+

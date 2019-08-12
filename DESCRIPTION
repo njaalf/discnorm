@@ -1,0 +1,21 @@
+Package: selector 
+Type: Package
+Title: Test for discretized normality in ordinal data
+Version: 0.1.0
+Author: Njål Foldnes
+Maintainer: The package maintainer <njal.foldnes@gmail.com>
+Description: Tests whether multivariate ordinal data may stem from discretizing a multivariate normal distribution
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
+Imports:
+  lavaan,
+  CompQuadForm,
+  reshape2,
+  goftest, 
+  ggplot2
+RoxygenNote: 6.1.1
