@@ -1,0 +1,16 @@
+
+computeT <- function(my.data, indices) {
+  Phat <- polychoric2(my.data, cor.smooth=TRUE, use_pbv = FALSE)$rho
+  thresholds.hat <- lapply(data.frame(my.data), function(x) c(-Inf,pc_th(x)[!is.infinite(pc_th(x))], Inf))
+  
+  eStat <- apply(indices, MARGIN=1, function(X) 
+  {
+    th1 <- thresholds.hat[[X[1]]]; th1 <- th1[!is.infinite(th1)]
+    th2 <- thresholds.hat[[X[2]]]; th2 <- th2[!is.infinite(th2)] #-c(1,thLength)
+    residual <- lav_matrix_vec(t(table(my.data[,X[1]], my.data[,X[2]]))/nrow(my.data) - t(pc_PI(Phat[X[1], X[2]], th1, th2)) )
+    sum(residual^2)
+  }
+  )
+  #T is now the sum of sqares of eStat.
+  return(sum(eStat))
+}
