@@ -1,8 +1,8 @@
 
 computeT <- function(my.data, indices) {
-  Phat <- polychoric2(my.data, cor.smooth=TRUE, use_pbv = FALSE)$rho
-  thresholds.hat <- lapply(data.frame(my.data), function(x) c(-Inf,pc_th(x)[!is.infinite(pc_th(x))], Inf))
-  
+  Phat <- sirt::polychoric2(my.data, cor.smooth=TRUE, use_pbv = FALSE)$rho
+  thresholds.hat <- lapply(data.frame(my.data), function(x) unique(c(-Inf, pc_th(x), Inf)))
+    
   eStat <- apply(indices, MARGIN=1, function(X) 
   {
     th1 <- thresholds.hat[[X[1]]]; th1 <- th1[!is.infinite(th1)]
