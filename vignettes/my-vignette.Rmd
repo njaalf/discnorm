@@ -32,14 +32,13 @@ The procedure is fully described in @fold1
 
 The main procedure is bootTest() which operates on an ordinal dataset and returns a p-value associated with the null-hypothesis of underlying normality. 
 ```{r}
-library(discnorm)
 library(psych)
 library(dplyr)
-                
-#random subsample of big-five dataset
+
 data(bfi)# from psych package
 set.seed(1234)
-my.sample <- bfi[sample(nrow(bfi), size=300 , replace=T),]
+#select a rather small subsample from the big-five data
+my.sample <- bfi[sample(nrow(bfi), size=200 , replace=T),]
 #check for underlying normality in the agreeableness indicators
 bootTest(my.sample[, paste0("A", 1:5)])
 # we have some evidence against the null hypothesis of underlying normality
