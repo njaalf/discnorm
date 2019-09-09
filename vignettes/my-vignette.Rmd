@@ -28,23 +28,31 @@ The discnorm package uses bootstrapping to help determine whether the commonly a
 
 The procedure is fully described in @fold1
 
-## An example
+## Examples
 
-The main procedure is bootTest() which operates on an ordinal dataset and returns a p-value associated with the null-hypothesis of underlying normality. 
+The main procedure is bootTest() which operates on an ordinal dataset and returns a p-value associated with the null-hypothesis of underlying normality.  Let us first use the test for a dataset that is produced by underlying normality.
 ```{r}
-library(psych)
-library(dplyr)
-
-data(bfi)# from psych package
+#let us discretize an underlying normal vector
+# with moderate correlation 
+rho <- 0.3
+Sigma <- diag(5)
+Sigma[Sigma !=1] <- rho
 set.seed(1234)
-#select a rather small subsample from the big-five data
-my.sample <- bfi[sample(nrow(bfi), size=200 , replace=T),]
-#check for underlying normality in the agreeableness indicators
-bootTest(my.sample[, paste0("A", 1:5)])
-# we have some evidence against the null hypothesis of underlying normality
-#is there underlying normality for agreeableness and openness combined?
-bootTest(my.sample[, c(paste0("A", 1:5), paste0("O", 1:5))])
-# strong evidence against underlying normality for these ten indicators
+norm.sample  <- MASS::mvrnorm(n=200, mu=rep(0,5), Sigma=Sigma)
+# let us discretize into 4 categories
+disc.sample <- discnorm::getdisc(norm.sample, rep(list(c(-Inf, -1, 1, 2, Inf)),5))
+
+#check for underlying normality
+bootTest(disc.sample)
+# we have no evidence against the null hypothesis of underlying normality
+```
+And let us discretize a non-normal dataset
+
+```{r}
+nonnorm.sample <- data.frame(norm.sample[, 1:4], norm.sample[,1]*norm.sample[,2])
+disc.sample2 <- discnorm::getdisc(nonnorm.sample, rep(list(c(-Inf, -1, 1, 2, Inf)),5))
+bootTest(disc.sample2)
+# rejected!
 ```
 
 
