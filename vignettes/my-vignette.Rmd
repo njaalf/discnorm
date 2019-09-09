@@ -4,7 +4,7 @@ author: "Njål Foldnes"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteIndexEntry{my-vignette}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 citation_package: natbib
@@ -12,13 +12,16 @@ bibliography: bibsel.bib
 biblio-style: apalike
 ---
 
----
-
-```{r setup, include = FALSE}
+```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+```
+
+
+```{r setup}
+library(discnorm )
 ```
 
 The discnorm package uses bootstrapping to help determine whether the commonly assumed normality assumption is tenable for an ordinal dataset. Researchers wanting to proceed with ordinal SEM based on polychoric correlations need first to check that the normality assumption is not violated. 
@@ -29,7 +32,6 @@ The procedure is fully described in @fold1
 
 The main procedure is bootTest() which operates on an ordinal dataset and returns a p-value associated with the null-hypothesis of underlying normality. 
 ```{r}
-
 library(discnorm)
 library(psych)
 library(dplyr)
@@ -38,11 +40,9 @@ library(dplyr)
 data(bfi)# from psych package
 set.seed(1234)
 my.sample <- bfi[sample(nrow(bfi), size=300 , replace=T),]
-
 #check for underlying normality in the agreeableness indicators
 bootTest(my.sample[, paste0("A", 1:5)])
 # we have some evidence against the null hypothesis of underlying normality
-
 #is there underlying normality for agreeableness and openness combined?
 bootTest(my.sample[, c(paste0("A", 1:5), paste0("O", 1:5))])
 # strong evidence against underlying normality for these ten indicators
@@ -50,5 +50,3 @@ bootTest(my.sample[, c(paste0("A", 1:5), paste0("O", 1:5))])
 
 
 ## References
-
-
