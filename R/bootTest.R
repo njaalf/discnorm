@@ -20,7 +20,7 @@ bootTest <- function(my.data, B=1000){
   #bootnorm returns NA if original data can  not use computeT, and a negative number if there are many NA's among the bootstrap samples
   Tstat <- tryCatch(computeT(my.data, indices),error=function(w) { NULL})
   if(is.null(Tstat)){
-    cat("Error: could not compute test statistic in original sample.\n")
+    stop("Error: could not compute test statistic in original sample.\n")
     return(NA) 
   }
   cat(" B = ")
@@ -35,7 +35,7 @@ bootTest <- function(my.data, B=1000){
   naprop <- sum( is.na(TstatBoot))/length(TstatBoot)
   
   if(naprop  > 0.5){
-    cat("Error: could not compute test statistic in more than 50% of the bootstrap samples.\n")
+    stop("Error: could not compute test statistic in more than 50% of the bootstrap samples.\n")
     return(NA)
   }
   

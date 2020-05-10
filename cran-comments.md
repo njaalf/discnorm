@@ -9,6 +9,4 @@
 
 ## 0.1.0 Submission
 
-After manual feedback from CRAN, I reduced length of title, and reduced
-information messaging to console. I now only have a reduced number of if(verbose) cat(), as suggested by Jelena Saf at CRAN.
-
+Our first time releasing this package
