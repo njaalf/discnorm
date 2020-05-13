@@ -9,4 +9,5 @@
 
 ## 0.1.0 Submission
 
-Our first time releasing this package
+Received feedback from CRAN submission officer Jelena Saf on 12th may
+to fix cat(" B = ") to only show with verbose = TRUE. This has been done. 

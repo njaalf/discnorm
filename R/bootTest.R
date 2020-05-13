@@ -38,11 +38,12 @@ bootTest <- function(my.data, B=1000, verbose=TRUE){
     stop("Error: could not compute test statistic in original sample.\n")
     return(NA) 
   }
-  cat(" B = ")
+  if(verbose)
+    cat("Progress 0% ")
   TstatBoot <- rep(0, B)
   for(i in (1:B)) {
     if(verbose & !(i %% 100))
-      cat( i, " ")
+      cat( 100*i/B, "% ", sep="")
     norm.sample <- MASS::mvrnorm(n=nrow(my.data), mu=rep(0, ncol(P.hat)), Sigma=P.hat)
     boot.sample <- data.frame(getdisc(norm.sample, thresholds.hat))
     TstatBoot[i] <- tryCatch(computeT(boot.sample, indices), error=function(w) { NA})
