@@ -1,10 +1,25 @@
-#' Bootstrap test for underlying non-normality in ordinal data.
+#' Bootstrap test for discretized normality
 #' 
-#'@param my.data a dataset containing ordinal data.
-#'@param B number of bootstrap samples.
+#' \code{bootTest} is a bootstrap test for whether an ordinal dataset is consistent with being
+#' a discretization of a multivariate normal dataset. 
+#' 
+#'@param my.data A dataset containing ordinal data. Must contain only integer values. 
+#'@param B Number of bootstrap samples.
+#'@param verbose If true, bootstrap progress is printed to the console.
 #'@return p-value associated with the underlying normality hypothesis.
+#'@references Njål Foldnes & Steffen Grønneberg (2019) Pernicious Polychorics: The Impact and Detection of Underlying Non-normality, Structural Equation Modeling: A Multidisciplinary Journal, DOI: 10.1080/10705511.2019.1673168
+
+#
+#'@examples 
+#'set.seed(1)
+#'norm.data <- MASS::mvrnorm(300, m=rep(0,3), 
+#'Sigma=cov(MASS::mvrnorm(15, mu=rep(0,3), Sigma=diag(3))))
+#'disc.data <- apply(norm.data,2,  cut, 
+#'breaks = c(-Inf, 0,1, Inf), labels=FALSE)# normal data discretized
+#'pvalue <- bootTest(disc.data, B=500)
+#'#no support for underlying non-normality
 #'@export
-bootTest <- function(my.data, B=1000){
+bootTest <- function(my.data, B=1000, verbose=TRUE){
   #sirt needs minimum value to be zero
   my.data <- sapply(data.frame(my.data), function(col) col-min(col,na.rm=T))
   P.hat <- sirt::polychoric2(my.data, cor.smooth=TRUE, use_pbv=FALSE)$rho
@@ -26,12 +41,14 @@ bootTest <- function(my.data, B=1000){
   cat(" B = ")
   TstatBoot <- rep(0, B)
   for(i in (1:B)) {
-    if(!(i %% 100))
-      cat( i, "\n")
+    if(verbose & !(i %% 100))
+      cat( i, " ")
     norm.sample <- MASS::mvrnorm(n=nrow(my.data), mu=rep(0, ncol(P.hat)), Sigma=P.hat)
     boot.sample <- data.frame(getdisc(norm.sample, thresholds.hat))
     TstatBoot[i] <- tryCatch(computeT(boot.sample, indices), error=function(w) { NA})
   }
+  if(verbose)
+    cat("\n")
   naprop <- sum( is.na(TstatBoot))/length(TstatBoot)
   
   if(naprop  > 0.5){

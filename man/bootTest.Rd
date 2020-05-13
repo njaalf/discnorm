@@ -2,18 +2,33 @@
 % Please edit documentation in R/bootTest.R
 \name{bootTest}
 \alias{bootTest}
-\title{Bootstrap test for underlying non-normality in ordinal data.}
+\title{Bootstrap test for discretized normality}
 \usage{
-bootTest(my.data, B = 1000)
+bootTest(my.data, B = 1000, verbose = TRUE)
 }
 \arguments{
-\item{my.data}{a dataset containing ordinal data.}
+\item{my.data}{A dataset containing ordinal data. Must contain only integer values.}
 
-\item{B}{number of bootstrap samples.}
+\item{B}{Number of bootstrap samples.}
+
+\item{verbose}{If true, bootstrap progress is printed to the console.}
 }
 \value{
 p-value associated with the underlying normality hypothesis.
 }
 \description{
-Bootstrap test for underlying non-normality in ordinal data.
+\code{bootTest} is a bootstrap test for whether an ordinal dataset is consistent with being
+a discretization of a multivariate normal dataset.
+}
+\examples{
+set.seed(1)
+norm.data <- MASS::mvrnorm(300, m=rep(0,3), 
+Sigma=cov(MASS::mvrnorm(15, mu=rep(0,3), Sigma=diag(3))))
+disc.data <- apply(norm.data,2,  cut, 
+breaks = c(-Inf, 0,1, Inf), labels=FALSE)# normal data discretized
+pvalue <- bootTest(disc.data, B=500)
+#no support for underlying non-normality
+}
+\references{
+Njål Foldnes & Steffen Grønneberg (2019) Pernicious Polychorics: The Impact and Detection of Underlying Non-normality, Structural Equation Modeling: A Multidisciplinary Journal, DOI: 10.1080/10705511.2019.1673168
 }

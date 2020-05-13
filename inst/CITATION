@@ -1,0 +1,16 @@
+citHeader("To cite covsim in publications use:")
+
+citEntry(entry = "Article",
+         title        = "Pernicious Polychorics: The Impact and Detection of Underlying Non-normality",
+         author       = personList(as.person("Njål Foldnes"),
+                                   as.person("Steffen Grønneberg")),
+         journal      = "Structural Equation Modeling: A Multidisciplinary Journal",
+         year         = "2019",
+         url          = "https://doi.org/10.1080/10705511.2019.1673168",
+
+         textVersion  =
+           paste("Njål Foldnes, Steffen Grønneberg (2019).",
+                 "Pernicious Polychorics: The Impact and Detection of Underlying Non-normality.",
+                 "Structural Equation Modeling: A Multidisciplinary Journal.",
+                 "URL https://doi.org/10.1080/10705511.2019.1673168")
+)

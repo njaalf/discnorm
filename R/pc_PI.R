@@ -1,7 +1,7 @@
 #this is the implied theorethical probabilities based on normality
 pc_PI <- function(rho, th.y1, th.y2) {
   nth.y1 <- length(th.y1); nth.y2 <- length(th.y2)
-  pth.y1 <- pnorm(th.y1);  pth.y2 <- pnorm(th.y2)
+  pth.y1 <- stats::pnorm(th.y1);  pth.y2 <- stats::pnorm(th.y2)
   
   # catch special case: rho = 0.0
   if(rho == 0.0) {

@@ -2,11 +2,10 @@ Package: discnorm
 Type: Package
 Title: Test for Discretized Normality in Ordinal Data
 Version: 0.1.0
-Authors@R: person("Njål", "Foldnes", email="njal.foldnes@gmail.com", role=c("aut", "cre")), 
+Authors@R: c(person("Njål", "Foldnes", email = "njal.foldnes@gmail.com", role = c("aut", "cre")),
            person("Steffen", "Grønneberg", email = "steffeng@gmail.com", role = c("aut")))
-Maintainer: The package maintainer <njal.foldnes@gmail.com>
 Description: Tests whether multivariate ordinal data may stem from discretizing a multivariate normal distribution.
-             The test is further described by Foldnes and Groenneberg (2019) <doi:10.1080/10705511.2019.1673168>.
+             The test is described by Foldnes and Grønneberg (2019) <doi:10.1080/10705511.2019.1673168>.
 License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
@@ -19,5 +18,6 @@ Imports:
   arules,
   sirt,
   MASS,
-  pbivnorm
+  pbivnorm, 
+  psych
 RoxygenNote: 7.1.0

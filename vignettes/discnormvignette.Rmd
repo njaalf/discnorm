@@ -30,7 +30,7 @@ The procedure is fully described in @fold1
 
 ## Examples
 
-The main procedure is bootTest() which operates on an ordinal dataset and returns a p-value associated with the null-hypothesis of underlying normality.  Let us first use the test for a dataset that is produced by underlying normality.
+The procedure is named bootTest() and operates on an ordinal dataset and returns a p-value associated with the null-hypothesis of underlying normality.  Let us first use the test for a dataset that is produced by underlying normality.
 ```{r}
 #let us discretize an underlying normal vector
 # with moderate correlation 
@@ -40,18 +40,20 @@ Sigma[Sigma !=1] <- rho
 set.seed(1234)
 norm.sample  <- MASS::mvrnorm(n=200, mu=rep(0,5), Sigma=Sigma)
 # let us discretize into 4 categories
-disc.sample <- discnorm::getdisc(norm.sample, rep(list(c(-Inf, -1, 1, 2, Inf)),5))
+disc.sample <- apply(norm.sample, 2, cut,   breaks=c(-Inf, -1, 1, 2, Inf), labels=FALSE)
 
 #check for underlying normality
-bootTest(disc.sample)
+pvalue <- bootTest(disc.sample, B=500)
+print(pvalue)
 # we have no evidence against the null hypothesis of underlying normality
 ```
 And let us discretize a non-normal dataset
 
 ```{r}
 nonnorm.sample <- data.frame(norm.sample[, 1:4], norm.sample[,1]*norm.sample[,2])
-disc.sample2 <- discnorm::getdisc(nonnorm.sample, rep(list(c(-Inf, -1, 1, 2, Inf)),5))
-bootTest(disc.sample2)
+disc.sample2 <- apply(nonnorm.sample, 2, cut, breaks=c(-Inf, -1, 1, 2, Inf), labels=FALSE)
+pvalue <- bootTest(disc.sample2, B=500)
+print(pvalue)
 # rejected!
 ```
 
