@@ -1,6 +1,8 @@
 
 computeT <- function(my.data, indices) {
-  suppressWarnings(Phat <- sirt::polychoric2(my.data, cor.smooth=TRUE, use_pbv = FALSE)$rho)
+  suppressWarnings(Phat <- sirt::polychoric2(my.data, cor.smooth=F, use_pbv = 2)$rho)
+  #suppressWarnings(Phat <- lavaan::lavCor(data.frame(my.data), 
+              #                            cor.smooth=FALSE)
   thresholds.hat <- lapply(data.frame(my.data), function(x) unique(c(-Inf, pc_th(x), Inf)))
     
   eStat <- apply(indices, MARGIN=1, function(X) 

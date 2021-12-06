@@ -22,7 +22,9 @@
 bootTest <- function(my.data, B=1000, verbose=TRUE){
   #sirt needs minimum value to be zero
   my.data <- sapply(data.frame(my.data), function(col) col-min(col,na.rm=T))
-  P.hat <- sirt::polychoric2(my.data, cor.smooth=TRUE, use_pbv=FALSE)$rho
+  #P.hat <- sirt::polychoric2(my.data, cor.smooth=TRUE, use_pbv=FALSE)$rho
+  P.hat <- lavaan::lavCor(data.frame(my.data), ordered=colnames(my.data), cor.smooth = TRUE)
+  
   thresholds.hat <- lapply(data.frame(my.data), function(x) unique(c(-Inf, pc_th(x), Inf)))
   d <- ncol(P.hat)
   indices <- NULL #has nrow*(nrow-1)/2 elements
@@ -42,7 +44,7 @@ bootTest <- function(my.data, B=1000, verbose=TRUE){
     cat("Progress 0% ")
   TstatBoot <- rep(0, B)
   for(i in (1:B)) {
-    if(verbose & !(i %% 100))
+    if(verbose & !(i %% ceiling(B/10)))
       cat( 100*i/B, "% ", sep="")
     norm.sample <- MASS::mvrnorm(n=nrow(my.data), mu=rep(0, ncol(P.hat)), Sigma=P.hat)
     boot.sample <- data.frame(getdisc(norm.sample, thresholds.hat))
