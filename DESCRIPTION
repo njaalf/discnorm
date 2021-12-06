@@ -1,7 +1,7 @@
 Package: discnorm 
 Type: Package
 Title: Test for Discretized Normality in Ordinal Data
-Version: 0.1.0
+Version: 0.1.1
 Authors@R: c(person("Njål", "Foldnes", email = "njal.foldnes@gmail.com", role = c("aut", "cre")),
            person("Steffen", "Grønneberg", email = "steffeng@gmail.com", role = c("aut")))
 Description: Tests whether multivariate ordinal data may stem from discretizing a multivariate normal distribution.
@@ -20,4 +20,4 @@ Imports:
   MASS,
   pbivnorm, 
   psych
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1

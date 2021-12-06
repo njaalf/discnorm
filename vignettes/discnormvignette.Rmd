@@ -4,7 +4,7 @@ author: "Njål Foldnes"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{my-vignette}
+  %\VignetteIndexEntry{Discnorm: Testing  for underlying normality in ordinal datasets}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 citation_package: natbib

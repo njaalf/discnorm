@@ -1,7 +1,7 @@
 discnorm
 ==========
 
-This package contains an implementation of a the bootstrap test for underlying non-normality propsed by Foldnes and Gronneberg (Structural Equation Modeling, 2019).
+This package contains an implementation of a the bootstrap test for underlying non-normality proposed by Foldnes and Gronneberg (Structural Equation Modeling, 2019).
 
 
 How to install
@@ -28,7 +28,7 @@ Package overview
 ----------------
 
 
-
+The package offers function bootTest() which tests an ordinal data frame for underlying normality.
 
 References
 ----------

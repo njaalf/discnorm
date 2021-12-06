@@ -1,3 +1,3 @@
-# discnorm 0.1.0
+# discnorm 0.1.1
 
-First release.
+Updated release, concerning polychoric estimator options. 

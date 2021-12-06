@@ -11,3 +11,8 @@
 
 Received feedback from CRAN submission officer Jelena Saf on 12th may
 to fix cat(" B = ") to only show with verbose = TRUE. This has been done. 
+
+## 0.1.1 Submission
+
+In computeT, change option use_pbv from 0 to 2 in sirt::polychoric2
+In bootTest, change the polychoric estimator from sirt::polychoric2 to lavaan::lavCor
