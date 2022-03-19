@@ -1,10 +1,10 @@
 ---
-title: "Discnorm: Testing  for underlying normality in ordinal datasets"
-author: "Njål Foldnes"
+title: "Discnorm: Detecting and adjusting for underlying non-normality in ordinal datasets"
+author: "Njål Foldnes and Steffen Grønneberg"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Discnorm: Testing  for underlying normality in ordinal datasets}
+  %\VignetteIndexEntry{Discnorm: Detecting and adjusting for underlying non-normality in ordinal datasets}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 citation_package: natbib
@@ -17,18 +17,18 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+knitr::opts_chunk$set(warning = FALSE, message=FALSE, error=TRUE, purl=FALSE)
 ```
 
 
 ```{r setup}
 library(discnorm )
+library(lavaan)
 ```
 
-The discnorm package uses bootstrapping to help determine whether the commonly assumed normality assumption is tenable for an ordinal dataset. Researchers wanting to proceed with ordinal SEM based on polychoric correlations need first to check that the normality assumption is not violated. 
+The discnorm package uses bootstrapping to help determine whether the commonly assumed normality assumption is tenable for an ordinal dataset. Researchers wanting to proceed with ordinal SEM based on polychoric correlations should first to check that the normalit copula assumption is not violated. Also, if the normality assumption is tenable, researchers may specify other marginal distributions using catLSadjust().
 
-The procedure is fully described in @fold1
-
-## Examples
+## Example of bootTest()
 
 The procedure is named bootTest() and operates on an ordinal dataset and returns a p-value associated with the null-hypothesis of underlying normality.  Let us first use the test for a dataset that is produced by underlying normality.
 ```{r}
@@ -57,5 +57,93 @@ print(pvalue)
 # rejected!
 ```
 
+The procedure is fully described in @fold1
+
+
+## Example of adjusted polychoric correlation: catLSadj()
+
+First we generate a large dataset with non-normal marginals by transforming the marginals of a normal dataset 
+```{r}
+shape= 2
+scale = 1/sqrt(shape)
+m1 <- list(F=function(x) pchisq(x, df=1), qF=function(x) qchisq(x, df=1), sd=sqrt(2))
+G3 <- function(x) pgamma(x+shape*scale, shape=shape, scale=scale)
+G3flip <- function(x) 1- G3(-x)
+qG3 <- function(x) qgamma(x, shape=shape, scale=scale)-shape*scale
+qG3flip <- function(x) -qG3(1-x)
+marginslist <- list(m1, list(F=G3, qF=qG3), list(F=G3flip, qF=qG3flip))
+                    
+Sigma <- diag(3)
+Sigma[Sigma==0] <- 0.5
+Sigma
+
+set.seed(1)
+norm.data <- MASS::mvrnorm(10^5, rep(0,3), Sigma)
+colnames(norm.data) <- c("x1", "x2", "x3")
+#With normal marginals, the correlation matrix is (approximately)
+#Sigma.
+
+#Transform the marginals to follow the elements in marginslist:
+nonnorm.data <- data.frame(x1=marginslist[[1]]$qF(pnorm(norm.data[, 1])), 
+                     x2=marginslist[[2]]$qF(pnorm(norm.data[, 2])),
+                     x3=marginslist[[3]]$qF(pnorm(norm.data[, 3])))
+
+cor(nonnorm.data)
+```
+
+Next we fit both the normal and the non-normal datasets to a factor model (which fits perfectly to both sets), and look at factor loading parameters
+```{r}
+
+head(standardizedsolution(cfa("F=~ x1+x2+x3", norm.data)),3)
+
+head(standardizedsolution(cfa("F=~ x1+x2+x3", nonnorm.data)),3)
+```
+
+Then we discretize the non-normal dataset and confirm that the strongly  polychoric correlations
+are strongly biased
+```{r}
+disc.data <- data.frame(x1=cut(nonnorm.data[, 1], breaks= c(-Inf, 0.1, 1, Inf), labels=FALSE), 
+                   x2= cut(nonnorm.data[, 2], breaks= c(-Inf, -.7, 0,1, Inf), labels=FALSE),
+                   x3=cut(nonnorm.data[, 3], breaks= c(-Inf, -1, 0,1, Inf), labels=FALSE))
+
+lavaan::lavCor(disc.data, ordered=colnames(disc.data))
+```
+
+Next, compute the adjusted correlations and the associated standard error.
+Confirm that the correlations are close to those in the original non-normal dataset:
+```{r}
+adjusted <- catLSadj(disc.data, marginslist, verbose=T )
+
+
+adjusted[[1]]
+```
+
+Running conventional ordinal factor analysis leads to biased factor loadings:
+```{r}
+head(standardizedsolution(fcat <- cfa("F=~ x1+x2+x3", disc.data, ordered=colnames(disc.data))),3)
+```
+
+
+These parameter estimates are close to the parameters of the continuous model for
+normal data, and not to the model parameters obtained from the discretized non-normal dataset
+To get consistent estimates of these parameters
+we need to use the adjusted polychoric correlation.
+```{r}
+
+sample.th   <- lavInspect(fcat, "sampstat")$th
+attr(sample.th, "th.idx") <- lavInspect(fcat, "th.idx")
+#the asymptotic covariance matrix of the adjusted polychorics: 
+gamma.adj <- adjusted[[2]]
+WLS.V.new <- diag(1/diag(gamma.adj))
+
+fcat.adj  <- cfa("F=~ x1+x2+x3", sample.cov=adjusted[[1]],
+                  sample.nobs=nrow(disc.data),  sample.th=sample.th,
+                  NACOV = gamma.adj, WLS.V=WLS.V.new)
+head(standardizedsolution(fcat.adj), 3)
+```
+
+Closely matches the model parameters obtained with the non-normal dataset
+                   
+The procedure is fully described in @fold2
 
 ## References

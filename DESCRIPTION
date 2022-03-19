@@ -1,23 +1,26 @@
 Package: discnorm 
 Type: Package
 Title: Test for Discretized Normality in Ordinal Data
-Version: 0.1.1
+Version: 0.2.0
 Authors@R: c(person("Njål", "Foldnes", email = "njal.foldnes@gmail.com", role = c("aut", "cre")),
            person("Steffen", "Grønneberg", email = "steffeng@gmail.com", role = c("aut")))
 Description: Tests whether multivariate ordinal data may stem from discretizing a multivariate normal distribution.
-             The test is described by Foldnes and Grønneberg (2019) <doi:10.1080/10705511.2019.1673168>.
+             The test is described by Foldnes and Grønneberg (2019) <doi:10.1080/10705511.2019.1673168>. 
+             In addition, an adjusted polychoric correlation estimator is provided that takes marginal knowledge into account,
+             as described by Grønneberg and Foldnes (2022) <doi: https://doi.org/10.1037/met0000495>. 
 License: GPL (>= 2)
 Encoding: UTF-8
-LazyData: true
 Suggests: 
     knitr,
     rmarkdown
 VignetteBuilder: knitr
 Imports:
-  lavaan,
+  lavaan (>= 0.6.10),
   arules,
   sirt,
   MASS,
-  pbivnorm, 
-  psych
+  pbivnorm,
+  cubature,
+  copula, 
+  mnormt
 RoxygenNote: 7.1.1

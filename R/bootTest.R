@@ -20,8 +20,14 @@
 #'#no support for underlying non-normality
 #'@export
 bootTest <- function(my.data, B=1000, verbose=TRUE){
+  #binary data are not admissible
+  numcats <- sapply(data.frame(my.data), function(col) length(unique(col)))
+  if(min(numcats) < 3){
+    stop("bootTest presently requires more than two categories in each variable. If relevant, you may exclude binary variables from the data frame and re-run.")
+  }
   #sirt needs minimum value to be zero
   my.data <- sapply(data.frame(my.data), function(col) col-min(col,na.rm=T))
+  
   #P.hat <- sirt::polychoric2(my.data, cor.smooth=TRUE, use_pbv=FALSE)$rho
   P.hat <- lavaan::lavCor(data.frame(my.data), ordered=colnames(my.data), cor.smooth = TRUE)
   

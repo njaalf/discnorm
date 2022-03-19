@@ -16,3 +16,7 @@ to fix cat(" B = ") to only show with verbose = TRUE. This has been done.
 
 In computeT, change option use_pbv from 0 to 2 in sirt::polychoric2
 In bootTest, change the polychoric estimator from sirt::polychoric2 to lavaan::lavCor
+
+## 0.2.0 Submission
+
+Provides new function that estimates the adjusted polychoric correlation and its asymptotic covariance matrix, that takes marginal substantive knowledge into account. Also, bootTest now issues a warning if variables are binary. 
